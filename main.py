@@ -7,8 +7,6 @@ import requests
 from bs4 import BeautifulSoup, ResultSet, Tag
 from atproto import Client
 
-W = 50
-
 Dia = Enum("Dia", ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"])
 
 
@@ -134,8 +132,14 @@ if __name__ == "__main__":
     for dia, row in rows.items():
         diasCardapio[dia] = getCardapioDoDia(row)
 
+    key: str = ""
+    with open("pass.txt", "r") as txt:
+        key = txt.read()
+        if not key:
+            raise Exception("Chave não encontrada")
+
     client = Client()
-    client.login("rubot050.bsky.social", "42fh-rwr3-diqz-63uj")
+    client.login("rubot050.bsky.social", key)
     text = diasCardapio[Dia.Segunda].almocoStr()
     for cardapio in diasCardapio.values():
         client.send_post(text=cardapio.almocoStr())
